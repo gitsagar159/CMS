@@ -1,0 +1,281 @@
+﻿@model CMS.Dto.UsersDto
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = "Home Page";
+
+    var allEligibleCourseList = new List<SelectListItem>();
+    if (ViewBag.eligigbleCourseList != null)
+    {
+
+        foreach (var item in ViewBag.eligigbleCourseList)
+        {
+            allEligibleCourseList.Add(new SelectListItem() { Text = item.EligibleCourseName, Value = item.Eid.ToString() });
+        }
+    }
+
+    var allMainStream = new List<SelectListItem>();
+    if (ViewBag.mainStreamList != null)
+    {
+
+        foreach (var item in ViewBag.mainStreamList)
+        {
+            allMainStream.Add(new SelectListItem() { Text = item.MainStreamName, Value = item.mid.ToString() });
+        }
+    }
+
+
+}
+
+<div style="background:url(../images/baner.jpg);">
+
+    <div class="col-lg-6">
+        <div class"card-body card-block" style="margin:10%">
+            @using (Html.BeginForm("AddUserDetails", "Home", FormMethod.Post, new { @id = "AddUserDetails", @class = "form-horizontal" }))
+            {
+                <div class="row form-group">
+                    <div class="col col-md-3"><label for="text-input" class=" form-control-label">Name</label></div>
+                    <div class="col-12 col-md-9">
+                        @Html.HiddenFor(m => m.id)
+                        @Html.TextBoxFor(m => m.UserName, new { @placeholder = "Name", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col col-md-3"><label for="text-input" class=" form-control-label">Email</label></div>
+                    <div class="col-12 col-md-9">
+                        @Html.TextBoxFor(m => m.Email, new { @placeholder = "Email", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col col-md-3"><label for="text-input" class=" form-control-label">Contact</label></div>
+                    <div class="col-12 col-md-9">
+                        @Html.TextBoxFor(m => m.Contact, new { @placeholder = "Contact", @class = "form-control", @pattern = "[1-9]{1}[0-9]{9}" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col col-md-3"><label for="text-input" class=" form-control-label">Gender</label></div>
+                    <div class="col-12 col-md-9">
+                        <div class="form-check">
+                            <div class="radio">
+                                <label for="radio1" class="form-check-label ">
+                                    @Html.RadioButtonFor(m => m.Gender, "Male", new { @class = "form-check-input" }) Male
+                                </label>
+                            </div>
+                            <div class="radio">
+                                <label for="radio2" class="form-check-label ">
+                                    @Html.RadioButtonFor(m => m.Gender, "Female", new { @class = "form-check-input" }) Female
+                                </label>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col col-md-3"><label for="select" class=" form-control-label">Last Qualification</label></div>
+                    <div class="col-12 col-md-9">
+                        @*<select id="qualification_dorpdown" name="qualification_dorpdown" class="form-control">
+                                @{
+                                    foreach (var item in allEligibleCourseList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>*@
+                        @Html.DropDownListFor(m => m.QualificationId, new SelectList(allEligibleCourseList, "Value", "Text"), new { @class = "form-control" })
+
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col col-md-3"><label for="select" class=" form-control-label">Select Stream</label></div>
+                    <div class="col-12 col-md-9">
+                        @*<select id="mainStream_dorpdown" name="mainStream_dorpdown" class="form-control">
+                                @{
+                                    foreach (var item in allMainStream)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                }
+                            </select>*@
+
+                        @Html.DropDownListFor(m => m.MainStreamId, new SelectList(allMainStream, "Value", "Text"), new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row form-group" id="subSreamDiv" style="display:none">
+
+                    <div class="col col-md-3"><label for="select" class=" form-control-label">Select SubStream</label></div>
+                    <div class="col-12 col-md-9">
+                        <select id="subStream_dorpdown" name="subStream_dorpdown" class="form-control"></select>
+
+                    </div>
+
+                </div>
+
+                <input type="button" value="Submit" id="submit" class="btn btn-primary btn-sm" onclick="submitForm();" />
+
+            }
+        </div>
+    </div>
+</div>
+<script src="~/Content/Plugin/toastr/toastr.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#subSreamDiv").hide();
+    });
+
+
+
+    function submitForm() {
+
+        if (UserFormValidate()) {
+            var Id = $("#id").val() == undefined || $("#id").val() == "" ? 0 : $("#id").val();
+            var userName = $("#UserName").val();
+            var email = $("#Email").val();
+            var contact = $("#Contact").val();
+            var gender = $('input[name=Gender]:checked').val();
+            var qualificationId = $("#QualificationId").val();
+            var mainStreamId = $("#MainStreamId").val();
+            var subStreamId = $("#subStream_dorpdown").val();
+
+
+            var fd = new FormData();
+            fd.append('id', Id);
+            fd.append('UserName', userName);
+            fd.append('Email', email);
+            fd.append('Contact', contact);
+            fd.append('Gender', gender);
+            fd.append('QualificationId', qualificationId);
+            fd.append('MainStreamId', mainStreamId);
+            fd.append('SubStreamId', subStreamId);
+
+
+            $.ajax({
+                url: '/Home/AddUserDetails',
+                data: fd,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (data) {
+
+                    if (JSON.stringify(data) != "") {
+                        //toastr.success('New Course added succsessfuly');
+                        //alert("Thanks")
+                        //window.setTimeout(function () { location.reload() }, 3000)
+
+                        window.location.href = "/Home/CourseDetails";
+                    }
+                    //if (data == "Update") {
+                    //    toastr.success('Course Updated succsessfuly');
+                    //    window.setTimeout(function () { window.location.href = "/Home/CourseDetails" }, 3000)
+                    //}
+                }
+            });
+
+        }
+    }
+
+
+    function UserFormValidate() {
+        var IsValid = true;
+
+        var userName = $("#UserName").val();
+        var email = $("#Email").val();
+        var contact = $("#Contact").val();
+        var gender = $('input[name=Gender]:checked').val();
+        var qualificationId = $("#QualificationId").val();
+        var mainStreamId = $("#MainStreamId").val();
+        var subStreamId = $("#subStream_dorpdown").val();
+
+
+        if (userName == "" || userName == undefined) {
+            alert("Please Insert Name");
+            return false;
+        }
+        if (email == "" || email == undefined) {
+            alert("Please select Email");
+            return false;
+        }
+        if (contact == "" || contact == undefined) {
+            alert("please select Contact");
+            return false;
+        }
+        if (gender == "" || gender == undefined) {
+            alert("please select gender");
+            return false;
+        }
+        if (qualificationId == "" || qualificationId == undefined) {
+            alert("please select qualification");
+            return false;
+        }
+        if (mainStreamId == "" || mainStreamId == undefined) {
+            alert("please select main stream");
+            return false;
+        }
+        //if (subStreamId == "" || subStreamId == undefined) {
+        //    alert("please select substream");
+        //    return false;
+        //}
+        if (!numbersonly()) {
+            alert("Please enter 10 digits");
+            return false;
+        }
+
+        return IsValid;
+    }
+
+    function numbersonly(contact)
+    {
+        var data = contact;
+        var filter = /^[a-zA-Z0-9]+$/;
+        if (!filter.test(data)) {
+            //alert("Please enter alphanumeric only");
+            //document.getElementById('<%=TextBox1.ClientID %>').value = "";
+            //document.getElementById('<%=TextBox1.ClientID %>').focus();
+            return false;
+        }
+        else if (data.Length != 10) {
+            //alert("Please enter 10 digits");
+            return false;
+        }
+        else
+            return true;
+    }
+
+    $("#MainStreamId").change(function () {
+
+        $('#subStream_dorpdown').find('option').remove();
+            //.end()
+            //.append('<option value="whatever">text</option>')
+            //.val('whatever')
+            
+        var mid = $("#MainStreamId").val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/Home/GetSubStreamData',
+            data: { Mid: mid },
+            success: function (data) {
+                jsonObj = jQuery.parseJSON(data);
+                if (jsonObj.length > 0) {
+                    $("#subSreamDiv").show();
+                    var i;
+                    for (i = 0; i < jsonObj.length; i++) {
+                        //$("#subStream_dorpdown").append(new Option(jsonObj[i].SubStreamName, jsonObj[i].Sid));
+                        $('#subStream_dorpdown').append('<option value="' + jsonObj[i].sid + '">' + jsonObj[i].SubStreamName + '</option>');
+                    }
+                }
+                else {
+                    $("#subSreamDiv").hide();
+                }
+
+
+
+            }
+        });
+
+    });
+
+</script>
+
+@*<script src="~/Scripts/global.js"></script>*@
+

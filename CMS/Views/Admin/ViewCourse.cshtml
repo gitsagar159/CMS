@@ -1,0 +1,114 @@
+﻿@model IEnumerable<CMS.Models.CourseDetailsViewModel>
+@{
+    ViewData["Title"] = "ViewCourse";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<table id="bootstrap-data-table" class="table table-striped table-bordered">
+    <tr>
+        <th>Sr.No</th>
+        <th>Course</th>
+        <th>Main Stream</th>
+        <th>Sub Stream</th>
+        <th>Eligibility</th>
+        <th>Action</th>
+
+    </tr>
+    @{ int i = 1;}
+    @foreach (var courseItem in Model)
+    {
+    <tr>
+        <td>
+            <span>@i</span>
+        </td>
+        <td>
+            <span>@courseItem.CourseName</span>
+        </td>
+        <td>
+            <span>@courseItem.MainStreamName</span>
+        </td>
+        <td>
+            <span>@courseItem.SubStreamName</span>
+        </td>
+        <td>
+            
+                <ul style="padding-left:20px;">
+                    @{
+                        foreach (var eligibilityItem in courseItem.Eligibilitie)
+                        {
+                            <li>@eligibilityItem.EligibleCourseName</li>
+                        }
+                    }
+                </ul>
+            
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Course", new { Cid = courseItem.Cid })
+            <!-- <a class="Edit" href="javascript:;">Edit</a>-->
+            <a class="Update" href="javascript:;" style="display:none">Update</a>
+            <a class="Cancel" href="javascript:;" style="display:none">Cancel</a>
+            <a class="Delete" href="javascript:void(0)" onclick="deleteEmployee(@courseItem.Cid)">Delete</a>
+
+        </td>
+    </tr>
+        i++;
+    }
+</table>
+
+
+
+
+
+
+<script src="~/Content/Plugin/toastr/toastr.js"></script>
+
+<script type="text/javascript">
+
+
+        //Edit event handler.
+        $("body").on("click", "#bootstrap-data-table .Edit", function () {
+            var row = $(this).closest("tr");
+            var id = row.find("span").html();
+
+            alert(id);
+        });
+
+        //Delete event handler.
+        function deleteEmployee(CourseId)
+        {
+
+            if (confirm("Do you want to delete this row?")) {
+                //debugger;
+
+                var id = CourseId
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/DeleteCourse",
+                    data: '{id: ' + id + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+
+                    success: function (data) {
+
+                        //alert(JSON.stringify(data));
+
+                        //alert("Record Deleted");
+                        //
+                        toastr.success('Record Deleted');
+                        window.setTimeout(function () { location.reload() }, 3000)
+                    },
+                    error: function (xhr) {
+                        alert("Error");
+                        error.show;
+                    }
+                });
+            }
+        }
+</script>
+
+<!--<script type="text/javascript">
+    $(document).ready(function () {
+        $('#bootstrap-data-table-export').DataTable();
+    });
+</script>-->

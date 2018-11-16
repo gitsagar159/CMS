@@ -1,0 +1,337 @@
+﻿@model CMS.Dto.CourseDto
+@using CMS.Models;
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = "Course";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+    var allEligibleCourseList = new List<SelectListItem>();
+    if (ViewBag.eligigbleCourseList != null)
+    {
+
+        foreach (var item in ViewBag.eligigbleCourseList)
+        {
+            allEligibleCourseList.Add(new SelectListItem() { Text = item.EligibleCourseName, Value = item.Eid.ToString() });
+        }
+    }
+
+    var allMainStream = new List<SelectListItem>();
+    if (ViewBag.mainStreamList != null)
+    {
+
+        foreach (var item in ViewBag.mainStreamList)
+        {
+            allMainStream.Add(new SelectListItem() { Text = item.MainStreamName, Value = item.mid.ToString() });
+        }
+    }
+
+   
+
+}
+
+<link href="~/Content/Plugin/toastr/toastr.css" rel="stylesheet" />
+<style>
+
+
+    .fstElement {
+        font-size: 1.2em;
+    }
+
+    .fstToggleBtn {
+        min-width: 16.5em;
+    }
+
+    .submitBtn {
+        display: none;
+    }
+
+    .fstMultipleMode {
+        display: block;
+    }
+
+        .fstMultipleMode .fstControls {
+            width: 100%;
+        }
+</style>
+
+<div class="breadcrumbs">
+    <div class="col-sm-4">
+        <div class="page-header float-left">
+            <div class="page-title">
+                <h1>Course</h1>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="page-header float-right">
+            <div class="page-title">
+                <ol class="breadcrumb text-right">
+                    <li class="active">Course</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Content/Plugin/fastselect.js"></script>
+<script src="~/Content/Plugin/fastselect.standalone.js"></script>
+<script src="~/Content/Plugin/fastselect.min.js"></script>
+<link rel="stylesheet" href="~/Content/Plugin/fastselect.min.css">
+<div class="col-lg-6">
+    <div class="card-header"><strong> Insert / Update Course</strong></div>
+    <div style="padding-bottom:10px;"></div>
+    <div class"card-body card-block">
+        @using (Html.BeginForm("CourseInsertUpdate", "Admin", FormMethod.Post, new { @id = "CourseInsertUpdate", @class = "form-horizontal" }))
+        {
+            <div class="row form-group">
+                <div class="col col-md-3"><label for="text-input" class=" form-control-label">Course Name</label></div>
+                <div class="col-12 col-md-9">
+                    @Html.HiddenFor(m => m.cid)
+                    @Html.TextBoxFor(m => m.CourseName, new {@class = "form-control" })
+
+                </div>
+
+            </div>
+
+            <div class="row form-group">
+                <div class="col col-md-3"><label for="select" class=" form-control-label">Select Stream</label></div>
+                <div class="col-12 col-md-9">
+                    <select id="mainStream_dorpdown" name="mainStream_dorpdown" class="form-control">
+                        @{
+                            foreach (var item in allMainStream)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row form-group" id="subSreamDiv" style="display:none">
+
+                <div class="col col-md-3"><label for="select" class=" form-control-label">Select SubStream</label></div>
+                <div class="col-12 col-md-9">
+                    <select id="subStream_dorpdown" name="subStream_dorpdown" class="form-control"></select>
+                </div>
+
+            </div>
+            <div class="row form-group">
+                <div class="col col-md-3"><label for="select" class=" form-control-label">Minimum Eligibility for course</label></div>
+                <div class="col-12 col-md-9">
+                    @*@Html.HiddenFor(m => m.eligibility)*@
+                    <select id="eligibility_dorpdown" name="eligibility_dorpdown" class="multipleSelect form-control" multiple>
+                        @{
+                            foreach (var item in allEligibleCourseList)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col col-md-3"><label for="text-input" class=" form-control-label">College</label></div>
+                <div class="col-12 col-md-9">
+                    @Html.TextBoxFor(m => m.College, new { @placeholder = "Course Name", @class = "form-control" })
+
+                </div>
+
+            </div>
+            <div class="row form-group">
+                <div class="col col-md-3"><label for="text-input" class=" form-control-label">University</label></div>
+                <div class="col-12 col-md-9">
+                    @Html.TextBoxFor(m => m.University, new { @placeholder = "Course Name", @class = "form-control" })
+
+                </div>
+
+            </div>
+
+            <input type="button" value="Submit" id="submit" class="btn btn-primary btn-sm" onclick="submitForm();" />
+
+        }
+    </div>
+</div>
+<script>
+
+    //$("#eligibility_dorpdown").change(function () {
+    //   var selectCourse =  $("#eligibility_dorpdown").val();
+    //    alert(selectCourse);
+    //})
+
+    $(document).ready(function () {
+        $("#subSreamDiv").hide();
+    });
+
+    $(window).load(function () {
+        $("#subSreamDiv").hide();
+    });
+
+    function submitForm() {
+
+        if (CourseFormValidate()) {
+            var courceId = $("#Id").val() == undefined || $("#Id").val() == "" ? 0 : $("#Id").val();
+            var courseName   = $("#CourseName").val();
+            var mainStreamDorpdown = $("#mainStream_dorpdown").val();
+            var subStreamDorpdown = $("#subStream_dorpdown").val();
+            var eligibility = $("#eligibility_dorpdown").val();
+            var university = $("#College").val();
+            var college = $("#University").val();
+
+            var fd = new FormData();
+            fd.append('cid', courceId);
+            fd.append('CourseName', courseName);
+            fd.append('MainStreamId', mainStreamDorpdown);
+            fd.append('SubStreamId', subStreamDorpdown);
+            fd.append('EligibleCourseId', eligibility);
+            fd.append('College', college);
+            fd.append('University', university);
+            //fd.append('DeleteFlag', eligibility);
+
+            $.ajax({
+                url: '/Admin/CourseInsertUpdate',
+                data: fd,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (data) {
+
+                    window.setTimeout(function () { location.reload() }, 3000)
+                    //alert(data);
+                    if (data == "Add")
+                    {
+                        toastr.success('New Course added succsessfuly');
+                        window.setTimeout(function () { location.reload() }, 3000)
+                    }
+                    if (data == "Update")
+                    {
+                        toastr.success('Course Updated succsessfuly');
+                        window.setTimeout(function () { window.location.href="/Admin/ViewCourse" }, 3000)
+                    }
+                }
+            });
+
+        }
+    }
+
+
+    function CourseFormValidate() {
+        var IsValid = true;
+        var courseName = $("#CourseName").val();
+        var mainStreamDorpdown = $("#mainStream_dorpdown").val();
+        var subStreamDorpdown = $("#subStream_dorpdown").val();
+        var eligibility = $("#eligibility_dorpdown").val();
+        var university = $("#College").val();
+        var college = $("#University").val();
+
+        if (courseName == "" || courseName == undefined) {
+            alert("Please Insert Course Name");
+            return false;
+        }
+        if (mainStreamDorpdown == "" || mainStreamDorpdown == undefined) {
+            alert("Please select main Stream");
+            return false;
+        }
+        if (eligibility == "" || eligibility == undefined) {
+            alert("please select eligibilty");
+            return false;
+        }
+        if (college == "" || college == undefined) {
+            alert("Please Insert College Name");
+            return false;
+        }
+        if (university == "" || university == undefined) {
+            alert("Please Insert University Name");
+            return false;
+        }
+
+        return IsValid;
+    }
+
+
+
+    $("#mainStream_dorpdown").change(function () {
+        $('#subStream_dorpdown').find('option').remove();
+        var mid = $("#mainStream_dorpdown").val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/Admin/GetSubStreamData',
+            data: { Mid: mid},
+            success: function (data) {
+                jsonObj = jQuery.parseJSON(data);
+                if (jsonObj.length > 0) {
+                    $("#subSreamDiv").show();
+                    var i;
+                    for (i = 0; i < jsonObj.length; i++) {
+                       // $("#subStream_dorpdown").append(new Option(jsonObj[i].SubStreamName, jsonObj[i].Sid));
+                        $('#subStream_dorpdown').append('<option value="' + jsonObj[i].sid + '">' + jsonObj[i].SubStreamName + '</option>');
+                    }
+                }
+                else {
+                    $("#subSreamDiv").hide();
+                }
+                
+                
+               
+            }
+        });
+
+    })
+
+    $('.multipleSelect').fastselect();
+    //$('#eligibility').fastselect();
+
+    $.Fastselect.defaults = {
+
+        elementClass: 'fstElement',
+        singleModeClass: 'fstSingleMode',
+        noneSelectedClass: 'fstNoneSelected',
+        multipleModeClass: 'fstMultipleMode',
+        queryInputClass: 'fstQueryInput',
+        queryInputExpandedClass: 'fstQueryInputExpanded',
+        fakeInputClass: 'fstFakeInput',
+        controlsClass: 'fstControls',
+        toggleButtonClass: 'fstToggleBtn',
+        activeClass: 'fstActive',
+        itemSelectedClass: 'fstSelected',
+        choiceItemClass: 'fstChoiceItem',
+        choiceRemoveClass: 'fstChoiceRemove',
+        userOptionClass: 'fstUserOption',
+
+        resultsContClass: 'fstResults',
+        resultsOpenedClass: 'fstResultsOpened',
+        resultsFlippedClass: 'fstResultsFilpped',
+        groupClass: 'fstGroup',
+        itemClass: 'fstResultItem',
+        groupTitleClass: 'fstGroupTitle',
+        loadingClass: 'fstLoading',
+        noResultsClass: 'fstNoResults',
+        focusedItemClass: 'fstFocused',
+
+        matcher: null,
+
+        url: null,
+        loadOnce: false,
+        apiParam: 'query',
+        initialValue: null,
+        clearQueryOnSelect: true,
+        minQueryLength: 1,
+        focusFirstItem: false,
+        flipOnBottom: true,
+        typeTimeout: 150,
+        userOptionAllowed: false,
+        valueDelimiter: ',',
+        maxItems: null,
+
+        parseData: null,
+        onItemSelect: null,
+        onItemCreate: null,
+        onMaxItemsReached: null,
+
+        placeholder: 'Choose option',
+        searchPlaceholder: 'Search options',
+        noResultsText: 'No results',
+        userOptionPrefix: 'Add '
+
+    };
+</script>
+
+<script src="~/Content/Plugin/toastr/toastr.js"></script>

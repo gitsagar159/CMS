@@ -1,0 +1,26 @@
+﻿@model CMS.Models.UserDetailsViewModel
+@{
+    ViewBag.Title = "CourseDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<table>
+    <thead>
+        <tr>
+            <th></th>
+        </tr>
+    </thead>
+</table>
+
+<p>Name : @Model.UserName</p>
+<p>Email : @Model.Email</p>
+<p>Contact : @Model.Contact</p>
+<p>Main Stream : @Model.MainStream</p>
+<p>Sub Stream : @Model.SubStream</p>
+@{ 
+    foreach(var item in Model.Course)
+    {
+        <p>Available Course : @item.EligibleCourseName</p>
+    }
+}
