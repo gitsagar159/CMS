@@ -215,7 +215,7 @@
         //    alert("please select substream");
         //    return false;
         //}
-        if (!numbersonly()) {
+        if (!numbersonly(contact)) {
             alert("Please enter 10 digits");
             return false;
         }
@@ -226,14 +226,14 @@
     function numbersonly(contact)
     {
         var data = contact;
-        var filter = /^[a-zA-Z0-9]+$/;
+        var filter = /^\d{10}$/;
         if (!filter.test(data)) {
             //alert("Please enter alphanumeric only");
             //document.getElementById('<%=TextBox1.ClientID %>').value = "";
             //document.getElementById('<%=TextBox1.ClientID %>').focus();
             return false;
         }
-        else if (data.Length != 10) {
+        else if (data.length != 10) {
             //alert("Please enter 10 digits");
             return false;
         }
