@@ -64,7 +64,7 @@ namespace CMS.Controllers
                 if(userDetails != null)
                 {
                     HttpContext.Session["AdminUser"] = userDetails;
-                    return View("Dashboard");
+                    return View("Course");
                 }
                 else
                 {
@@ -137,6 +137,9 @@ namespace CMS.Controllers
 
                     courseDetails.Cid = item.cid;
                     courseDetails.CourseName = item.CourseName;
+                    courseDetails.College = item.College;
+                    courseDetails.University = item.University;
+                    courseDetails.duration = item.duration;
 
                     var mainStream = await dataAccess.GetMainStreamByKey(item.MainStreamId);
                     var subStream = await dataAccess.GetSubStreamByKey(item.SubStreamId);
@@ -185,5 +188,77 @@ namespace CMS.Controllers
             string res = JsonConvert.SerializeObject(subStreamList);
             return Json(res);
         }
+
+        public async Task<ActionResult> DeleteContactUs(int id)
+        {
+            var deletedContactUsId = await dataAccess.GetDeletecontactUsByKye(id);
+            return Json(deletedContactUsId);
+        }
+
+        public async Task<ActionResult> DeleteUserData(int id)
+        {
+            var deletedUserId = await dataAccess.GetDeleteUserByKye(id);
+            return Json(deletedUserId);
+        }
+
+        
+
+        public async Task<ActionResult> ViewContactUs()
+        {
+            if (HttpContext.Session["AdminUser"] != null)
+            {
+                var contactUsList = await dataAccess.GetAllContactUsDetails();
+                return View(contactUsList);
+            }
+            else
+            {
+                ViewData["LoginError"] = "Please Login First";
+                return View("Index");
+            }
+
+
+        }
+
+
+        public async Task<ActionResult> ViewUserList()
+        {
+            if (HttpContext.Session["AdminUser"] != null)
+            {
+                List<UserDetailsViewModel> objUserList = new List<UserDetailsViewModel>();
+
+               
+
+                var UserList = await dataAccess.GetAllUser();
+
+                
+                foreach(var item in UserList)
+                {
+                    UserDetailsViewModel objUser = new UserDetailsViewModel();
+
+                    var Mainstream = await dataAccess.GetMainStreamByKey(item.MainStreamId);
+                    var Substream = await dataAccess.GetSubStreamByKey(item.SubStreamId);
+                    var Qualification = await dataAccess.GetEligibleCourseByKye(item.QualificationId);
+                    objUser.UserName = item.UserName;
+                    objUser.Contact = item.Contact;
+                    objUser.Email = item.Email;
+                    objUser.id = item.id;
+                    objUser.MainStream = Mainstream.MainStreamName;
+                    objUser.SubStream = Substream == null ? "No Sub stream" : Substream.SubStreamName;
+                    objUser.LastQualification = Qualification.EligibleCourseName;
+
+                    objUserList.Add(objUser);
+                }
+                return View(objUserList);
+            }
+            else
+            {
+                ViewData["LoginError"] = "Please Login First";
+                return View("Index");
+            }
+
+
+        }
+
+
     }
 }

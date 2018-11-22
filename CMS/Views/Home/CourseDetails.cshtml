@@ -2,6 +2,11 @@
 @{
     ViewBag.Title = "CourseDetails";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    if(Model == null)
+    {
+        Response.Redirect("~/Home/Index");
+    }
 }
 
 <section class="team agileits" id="team">
@@ -9,37 +14,53 @@
         <div class="container">
             
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-4">
                     <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Contact</th>
-                                <th>Main Stream</th>
-                                <th>Sub Stream</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>@Model.UserName</td>
-                                <td>@Model.Email</td>
-                                <td>@Model.Contact</td>
-                                <td>@Model.MainStream</td>
-                                <td>@Model.SubStream</td>
-                            </tr>
-                            <tr>
-                                <td> <b>You may go with courses: </b></td>
-                                <td colspan="4">
-                                    @{
-                                        foreach (var item in Model.Course)
-                                        {
-                                            <div class="col-md-6">@item.EligibleCourseName</div>
-                                        }
+                        <tr>
+                            <th colspan="2" style="padding-left:30%"> User Details</th>
+                        </tr>
+
+                        <tr>
+                            <td><b>Name :</b></td>
+                            <td>@Model.UserName</td>
+                        </tr>
+                        <tr>
+                            <td><b>Email :</b></td>
+                            <td>@Model.Email</td>
+                        </tr>
+                        <tr>
+                            <td><b>Contact No :</b></td>
+                            <td>@Model.Contact</td>
+                        </tr>
+                        <tr>
+                            <td><b>Last Qualification :</b></td>
+                            <td>@Model.LastQualification</td>
+                        </tr>
+                        <tr>
+                            <td><b>Main Stream :</b></td>
+                            <td>@Model.MainStream</td>
+                        </tr>
+                        <tr> 
+                            <td><b>Sub Stream :</b></td>
+                            <td>@Model.SubStream</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-4">
+                    <table class="table table-striped">
+                        <tr>
+                            <th> <b>You may go with courses: </b></th>
+                        </tr>
+                        <tr>
+                            <td st>
+                                @{
+                                    foreach (var item in Model.Course)
+                                    {
+                                        <div class="col-md-6">@item.EligibleCourseName</div>
                                     }
-                                </td>
-                            </tr>
-                        </tbody>
+                                }
+                            </td>
+                        </tr>
                     </table>
                 </div>
 

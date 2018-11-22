@@ -1,65 +1,56 @@
-﻿@model IEnumerable<CMS.Models.CourseDetailsViewModel>
+﻿@model IEnumerable<CMS.Models.UserDetailsViewModel>
 @{
-    ViewData["Title"] = "ViewCourse";
+    ViewBag.Title = "ViewUserList";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
 <table id="bootstrap-data-table" class="table table-striped table-bordered">
     <tr>
         <th>Sr.No</th>
-        <th>Course</th>
-        <th>Main Stream</th>
-        <th>Sub Stream</th>
-        <th>Eligibility</th>
-        <th>Duration</th>
-        <th>College</th>
-        <th>University</th>
+        <th>User Name</th>
+        <th>Contact Number</th>
+        <th>Email</th>
+        <th>Gender</th>
+        <th>Last Qualification</th>
+        <th>Intrested Stream</th>
+        <th>Intrested Sub Stream</th>
         <th>Action</th>
 
     </tr>
     @{ int i = 1;}
-    @foreach (var courseItem in Model)
+    @foreach (var userItem in Model)
     {
     <tr>
         <td>
             <span>@i</span>
         </td>
         <td>
-            <span>@courseItem.CourseName</span>
+            <span>@userItem.UserName</span>
         </td>
         <td>
-            <span>@courseItem.MainStreamName</span>
+            <span>@userItem.Contact</span>
         </td>
         <td>
-            <span>@courseItem.SubStreamName</span>
+            <span>@userItem.Email</span>
         </td>
         <td>
-
-            <ul style="padding-left:20px;">
-                @{
-                    foreach (var eligibilityItem in courseItem.Eligibilitie)
-                    {
-                        <li>@eligibilityItem.EligibleCourseName</li>
-                    }
-                }
-            </ul>
-
+            <span>@userItem.Gender</span>
         </td>
         <td>
-            <span>@courseItem.duration</span>
+            <span>@userItem.LastQualification</span>
         </td>
         <td>
-            <span>@courseItem.College</span>
+            <span>@userItem.MainStream</span>
         </td>
         <td>
-            <span>@courseItem.University</span>
+            <span>@userItem.SubStream</span>
         </td>
         <td>
-            @Html.ActionLink("Edit", "Course", new { Cid = courseItem.Cid })
+            @*@Html.ActionLink("Edit", "Course", new { Cid = userItem.id })*@
             <!-- <a class="Edit" href="javascript:;">Edit</a>-->
             <a class="Update" href="javascript:;" style="display:none">Update</a>
             <a class="Cancel" href="javascript:;" style="display:none">Cancel</a>
-            <a class="Delete" href="javascript:void(0)" onclick="deleteEmployee(@courseItem.Cid)">Delete</a>
+            <a class="Delete" href="javascript:void(0)" onclick="deleteUser(@userItem.id)">Delete</a>
 
         </td>
     </tr>
@@ -86,17 +77,17 @@
         });
 
         //Delete event handler.
-        function deleteEmployee(CourseId)
+        function deleteUser(Id)
         {
 
             if (confirm("Do you want to delete this row?")) {
                 //debugger;
 
-                var id = CourseId
+                var id = Id
                 debugger;
                 $.ajax({
                     type: "POST",
-                    url: "/Admin/DeleteCourse",
+                    url: "/Admin/DeleteUserData",
                     data: '{id: ' + id + '}',
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",

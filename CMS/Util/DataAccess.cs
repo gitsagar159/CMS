@@ -65,6 +65,15 @@ namespace CMS.Util
             }
         }
 
+        public async Task<List<ContactUsDto>> GetAllContactUsDetails()
+        {
+            using (connection = Get_Connection())
+            {
+                var dataList = await connection.QueryAsync<ContactUsDto>("select * from contactus where isDelete = 0", commandType: CommandType.Text);
+                return dataList.ToList();
+            }
+        }
+
         public async Task<QualificationDto> GetEligibleCourseByKye(int id)
         {
             using (connection = Get_Connection())
@@ -110,6 +119,24 @@ namespace CMS.Util
             }
         }
 
+        public async Task<List<UsersDto>> GetAllUser()
+        {
+            using (connection = Get_Connection())
+            {
+                var dataList = await connection.QueryAsync<UsersDto>("select * from users where IsDelete = 0", commandType: CommandType.Text);
+                return dataList.ToList();
+            }
+        }
+
+        public async Task<List<CountByStream>> GetUserCountByStream()
+        {
+            using (connection = Get_Connection())
+            {
+                var dataList = await connection.QueryAsync<CountByStream>("select count(*) as Count,MainStreamId from users u join MainStream m on u.MainStreamId = m.mid where m.DeleteFlag = 0 group by u.MainStreamId", commandType: CommandType.Text);
+                return dataList.ToList();
+            }
+        }
+
         public async Task<UsersDto> GetUserByKey(int id)
         {
             using (connection = Get_Connection())
@@ -135,8 +162,9 @@ namespace CMS.Util
                         param.Add("DeleteFlag", model.DeleteFlag, DbType.Boolean, ParameterDirection.Input);
                         param.Add("College", model.College, DbType.String, ParameterDirection.Input);
                         param.Add("University", model.University, DbType.String, ParameterDirection.Input);
+                        param.Add("duration", model.duration, DbType.String, ParameterDirection.Input);
 
-                        var lastInsertedId = await connection.ExecuteScalarAsync<int>("sp_InsertUpdateCourse", param, commandType: CommandType.StoredProcedure);
+                    var lastInsertedId = await connection.ExecuteScalarAsync<int>("sp_InsertUpdateCourse", param, commandType: CommandType.StoredProcedure);
                     return lastInsertedId;
                     }
                 }
@@ -178,6 +206,33 @@ namespace CMS.Util
 
         }
 
+        public async Task<int> InsertContactus(ContactUsDto model)
+        {
+
+            try
+            {
+                using (connection = Get_Connection())
+                {
+                    var param = new DynamicParameters();
+                    param.Add("id", model.id, DbType.Int32, ParameterDirection.Input);
+                    param.Add("firstname", model.firstname, DbType.String, ParameterDirection.Input);
+                    param.Add("lastname", model.lastname, DbType.String, ParameterDirection.Input);
+                    param.Add("Email", model.Email, DbType.String, ParameterDirection.Input);
+                    param.Add("phonenumber", model.phonenumber, DbType.String, ParameterDirection.Input);
+                    param.Add("message", model.message, DbType.String, ParameterDirection.Input);
+
+                    var userid = await connection.ExecuteScalarAsync<int>("sp_InsertContactUs", param, commandType: CommandType.StoredProcedure);
+                    return userid;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+        }
+
         public async Task<int> GetDeleteCourseByKye(int id)
         {
           
@@ -190,6 +245,48 @@ namespace CMS.Util
 
                     var deletedCourseId = await connection.QueryAsync<int>("sp_DeleteCourseByKey", param, commandType: CommandType.StoredProcedure);
                     return deletedCourseId.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<int> GetDeletecontactUsByKye(int id)
+        {
+
+            try
+            {
+                using (connection = Get_Connection())
+                {
+                    var param = new DynamicParameters();
+                    param.Add("id", id, DbType.Int32, ParameterDirection.Input);
+
+                    var deletedCourseId = await connection.QueryAsync<int>("sp_DeleteCntactUsByKey", param, commandType: CommandType.StoredProcedure);
+                    return deletedCourseId.FirstOrDefault();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<int> GetDeleteUserByKye(int id)
+        {
+
+            try
+            {
+                using (connection = Get_Connection())
+                {
+                    var param = new DynamicParameters();
+                    param.Add("id", id, DbType.Int32, ParameterDirection.Input);
+
+                    var deletedUserId = await connection.QueryAsync<int>("sp_DeleteUserByKey", param, commandType: CommandType.StoredProcedure);
+                    return deletedUserId.FirstOrDefault();
                 }
             }
             catch (Exception ex)

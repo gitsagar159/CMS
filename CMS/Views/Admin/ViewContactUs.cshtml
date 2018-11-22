@@ -1,65 +1,45 @@
-﻿@model IEnumerable<CMS.Models.CourseDetailsViewModel>
+﻿@model IEnumerable<CMS.Dto.ContactUsDto>
 @{
-    ViewData["Title"] = "ViewCourse";
+    ViewData["Title"] = "View Contact Us";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
 <table id="bootstrap-data-table" class="table table-striped table-bordered">
     <tr>
         <th>Sr.No</th>
-        <th>Course</th>
-        <th>Main Stream</th>
-        <th>Sub Stream</th>
-        <th>Eligibility</th>
-        <th>Duration</th>
-        <th>College</th>
-        <th>University</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Contact</th>
+        <th>Message</th>
         <th>Action</th>
 
     </tr>
     @{ int i = 1;}
-    @foreach (var courseItem in Model)
+    @foreach (var item in Model)
     {
     <tr>
         <td>
             <span>@i</span>
         </td>
         <td>
-            <span>@courseItem.CourseName</span>
+            <span>@item.firstname</span>
         </td>
         <td>
-            <span>@courseItem.MainStreamName</span>
+            <span>@item.lastname</span>
         </td>
         <td>
-            <span>@courseItem.SubStreamName</span>
+            <span>@item.Email</span>
         </td>
         <td>
-
-            <ul style="padding-left:20px;">
-                @{
-                    foreach (var eligibilityItem in courseItem.Eligibilitie)
-                    {
-                        <li>@eligibilityItem.EligibleCourseName</li>
-                    }
-                }
-            </ul>
-
+            <span>@item.phonenumber</span>
         </td>
         <td>
-            <span>@courseItem.duration</span>
+            <span>@item.message</span>
         </td>
         <td>
-            <span>@courseItem.College</span>
-        </td>
-        <td>
-            <span>@courseItem.University</span>
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Course", new { Cid = courseItem.Cid })
-            <!-- <a class="Edit" href="javascript:;">Edit</a>-->
-            <a class="Update" href="javascript:;" style="display:none">Update</a>
-            <a class="Cancel" href="javascript:;" style="display:none">Cancel</a>
-            <a class="Delete" href="javascript:void(0)" onclick="deleteEmployee(@courseItem.Cid)">Delete</a>
+            @*@Html.ActionLink("Edit", "Course", new { id = item.id })*@
+            <a class="Delete" href="javascript:void(0)" onclick="deleteContactUs(@item.id)">Delete</a>
 
         </td>
     </tr>
@@ -86,17 +66,17 @@
         });
 
         //Delete event handler.
-        function deleteEmployee(CourseId)
+    function deleteContactUs(Id)
         {
 
             if (confirm("Do you want to delete this row?")) {
                 //debugger;
 
-                var id = CourseId
+                var id = Id
                 debugger;
                 $.ajax({
                     type: "POST",
-                    url: "/Admin/DeleteCourse",
+                    url: "/Admin/DeleteContactUs",
                     data: '{id: ' + id + '}',
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",

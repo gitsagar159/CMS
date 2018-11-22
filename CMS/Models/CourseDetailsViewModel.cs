@@ -12,6 +12,10 @@ namespace CMS.Models
         public  string MainStreamName { get; set; }
         public string SubStreamName { get; set; }
         public string CourseName { get; set; }
+        public string College { get; set; }
+        public string University { get; set; }
+        public string duration { get; set; }
+
         public List<QualificationDto> Eligibilitie = new List<QualificationDto>();
     }
 }

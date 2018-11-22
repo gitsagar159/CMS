@@ -149,9 +149,12 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Dto\AdminUserDto.cs" />
+    <Compile Include="Dto\ContactUsDto.cs" />
     <Compile Include="Dto\CourseDto.cs" />
+    <Compile Include="Dto\GetUserCountByStream.cs" />
     <Compile Include="Dto\MainStreamDto.cs" />
     <Compile Include="Dto\QualificationDto.cs" />
+    <Compile Include="Dto\StatasticsDto.cs" />
     <Compile Include="Dto\SubStreamDto.cs" />
     <Compile Include="Dto\UsersDto.cs" />
     <Compile Include="Global.asax.cs">
@@ -1452,6 +1455,10 @@
     <Content Include="Views\Shared\_LayoutAdmin.cshtml" />
     <Content Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
     <Content Include="Views\Home\CourseDetails.cshtml" />
+    <Content Include="Views\Admin\ViewContactUs.cshtml" />
+    <Content Include="Views\Home\Statastics.cshtml" />
+    <Content Include="Views\Shared\_Statastics.cshtml" />
+    <Content Include="Views\Admin\ViewUserList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -51,8 +51,11 @@ namespace CMS.Controllers
             //var test =  GetCourseDetailsOfUser(User);
             var userDetails = await dataAccess.GetUserByKey(User);
 
+            var lastQualification = await dataAccess.GetEligibleCourseByKye(userDetails.QualificationId);
+
             userModel.id = userDetails.id;
             userModel.UserName = userDetails.UserName;
+            userModel.LastQualification = lastQualification.EligibleCourseName;
             userModel.Email = userDetails.Email;
             userModel.Contact = userDetails.Contact;
             
@@ -162,12 +165,14 @@ namespace CMS.Controllers
 
             List<CourseDto> courseDetails = new List<CourseDto>();
 
+            var lastQualification = await dataAccess.GetEligibleCourseByKye(userDetails.QualificationId);
             var mainStream = await dataAccess.GetMainStreamByKey(userDetails.MainStreamId);
             var subStream = await dataAccess.GetSubStreamByKey(userDetails.SubStreamId);
 
             userModel.id = userDetails.id;
             userModel.UserName = userDetails.UserName;
             userModel.Email = userDetails.Email;
+            userModel.LastQualification = lastQualification.EligibleCourseName;
             userModel.Contact = userDetails.Contact;
             userModel.MainStream = mainStream.MainStreamName;
             userModel.SubStream = subStream.SubStreamName;
@@ -203,6 +208,43 @@ namespace CMS.Controllers
             
 
             return userModel;
+        }
+
+        public async Task<ActionResult> ContactUsDetails(ContactUsDto contactus)
+        {
+            var insetedContact = await dataAccess.InsertContactus(contactus);
+            
+            return Json("Ok");
+        }
+
+        public async Task<ActionResult> Statastics()
+        {
+            StatasticsDto objstatastic = new StatasticsDto();
+
+            
+
+            var StreameData = await dataAccess.GetUserCountByStream();
+
+            List<chart> objChartList = new List<chart>();
+
+            foreach (var item in StreameData)
+            {
+                chart objCart = new chart();
+
+                var MainStream = await dataAccess.GetMainStreamByKey(item.MainStreamId);
+
+                objCart.y = item.Count;
+                objCart.indexLabel = MainStream.MainStreamName;
+
+                objChartList.Add(objCart);
+            }
+
+
+            string ChartDetails = JsonConvert.SerializeObject(objChartList);
+
+            objstatastic.ChartJson = ChartDetails;
+
+            return View(objstatastic);
         }
     }
 }

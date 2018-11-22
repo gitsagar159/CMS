@@ -1,0 +1,48 @@
+﻿@model CMS.Dto.StatasticsDto
+@{
+    ViewBag.Title = "Statastics";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div id="chartContainer" style="height: 80%; width: 100%; margin-top:30px;"></div>
+
+<script type="text/javascript">
+    window.onload = function ()
+    {
+        //var chartData = [{ y: 4181563, indexLabel: "PlayStation 3" },
+        //    { y: 2175498, indexLabel: "Wii" },
+        //    { y: 3125844, indexLabel: "Xbox 360" },
+        //    { y: 1176121, indexLabel: "Nintendo DS" },
+        //    { y: 1727161, indexLabel: "PSP" },
+        //    { y: 4303364, indexLabel: "Nintendo 3DS" },
+        //    { y: 1717786, indexLabel: "PS Vita" }]
+
+        var chartData = @Html.Raw(Model.ChartJson);
+
+        var chart = new CanvasJS.Chart("chartContainer",
+            {
+                theme: "theme3",
+                title: {
+                    text: "Stastastics of Streame"
+                },
+                legend: {
+                    maxWidth: 350,
+                    itemWidth: 120
+                },
+                data: [
+                    {
+                        type: "pie",
+                        showInLegend: true,
+                        toolTipContent: "{indexLabel} - #percent %",
+                        //yValueFormatString: "#,##0,,.## Million",
+                        legendText: "{indexLabel}",
+                        dataPoints: chartData
+                    }
+                ]
+            });
+        chart.render();
+    }
+</script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>

@@ -1,0 +1,38 @@
+﻿<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+<script type="text/javascript">
+    window.onload = function ()
+    {
+        //var chartData = [{ y: 4181563, indexLabel: "PlayStation 3" },
+        //    { y: 2175498, indexLabel: "Wii" },
+        //    { y: 3125844, indexLabel: "Xbox 360" },
+        //    { y: 1176121, indexLabel: "Nintendo DS" },
+        //    { y: 1727161, indexLabel: "PSP" },
+        //    { y: 4303364, indexLabel: "Nintendo 3DS" },
+        //    { y: 1717786, indexLabel: "PS Vita" }]
+
+        var chartData = @Html.Raw(Model.ChartJson);
+
+        var chart = new CanvasJS.Chart("chartContainer",
+            {
+                title: {
+                    text: "Stastastics of Streame"
+                },
+                legend: {
+                    maxWidth: 350,
+                    itemWidth: 120
+                },
+                data: [
+                    {
+                        type: "pie",
+                        showInLegend: true,
+                        legendText: "{indexLabel}",
+                        dataPoints: chartData
+                    }
+                ]
+            });
+        chart.render();
+    }
+</script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+

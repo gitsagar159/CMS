@@ -54,24 +54,7 @@
         }
 </style>
 
-<div class="breadcrumbs">
-    <div class="col-sm-4">
-        <div class="page-header float-left">
-            <div class="page-title">
-                <h1>Course</h1>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-8">
-        <div class="page-header float-right">
-            <div class="page-title">
-                <ol class="breadcrumb text-right">
-                    <li class="active">Course</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
+
 <script src="~/Content/Plugin/fastselect.js"></script>
 <script src="~/Content/Plugin/fastselect.standalone.js"></script>
 <script src="~/Content/Plugin/fastselect.min.js"></script>
@@ -130,7 +113,7 @@
             <div class="row form-group">
                 <div class="col col-md-3"><label for="text-input" class=" form-control-label">College</label></div>
                 <div class="col-12 col-md-9">
-                    @Html.TextBoxFor(m => m.College, new { @placeholder = "Course Name", @class = "form-control" })
+                    @Html.TextBoxFor(m => m.College, new { @placeholder = "College Name", @class = "form-control" })
 
                 </div>
 
@@ -138,8 +121,21 @@
             <div class="row form-group">
                 <div class="col col-md-3"><label for="text-input" class=" form-control-label">University</label></div>
                 <div class="col-12 col-md-9">
-                    @Html.TextBoxFor(m => m.University, new { @placeholder = "Course Name", @class = "form-control" })
+                    @Html.TextBoxFor(m => m.University, new { @placeholder = "University Name", @class = "form-control" })
 
+                </div>
+
+            </div>
+            <div class="row form-group">
+                <div class="col col-md-3"><label for="text-input" class=" form-control-label">Duration</label></div>
+                <div class="col-12 col-md-9">
+                    <select id="duration" name="duration" class="form-control">
+                        <option value="6 Month">6 Month</option>
+                        <option value="1 Year">1 Year</option>
+                        <option value="2 Year">2 Year</option>
+                        <option value="3 Year">3 Year</option>
+                        <option value="4 Year">4 Year</option>
+                    </select>
                 </div>
 
             </div>
@@ -174,6 +170,9 @@
             var eligibility = $("#eligibility_dorpdown").val();
             var university = $("#College").val();
             var college = $("#University").val();
+            var duration = $("#duration").val();
+
+            
 
             var fd = new FormData();
             fd.append('cid', courceId);
@@ -183,6 +182,7 @@
             fd.append('EligibleCourseId', eligibility);
             fd.append('College', college);
             fd.append('University', university);
+            fd.append('duration', duration);
             //fd.append('DeleteFlag', eligibility);
 
             $.ajax({

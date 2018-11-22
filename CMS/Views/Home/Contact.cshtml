@@ -29,18 +29,161 @@
                 </div>
                 <div class="col-lg-7 col-md-7 col-sm-7 contact-right">
                     <h5>Contact Us  :</h5>
-                    <form action="#" class="form_w3layouts" method="post">
-                        <input type="text" placeholder="First Name" required="">
-                        <input type="text" placeholder="last Name" required="">
-                        <input class="email" type="email" placeholder="Email" required="">
-                        <input type="text" placeholder="Phone Number" required="">
-                        <textarea placeholder="Message" required=""></textarea>
-                        <input type="submit" value="SUBMIT">
+                    @using (Html.BeginForm("ContactUsDetails", "Home", FormMethod.Post, new { @id = "ContactUsDetails", @class = "form-horizontal" }))
+                    {
+                        <input type="text" placeholder="First Name" name="firstname" id="firstname" required="">
+                        <input type="text" placeholder="last Name" name="lastname" id="lastname" required="">
+                        <input class="email" type="email" placeholder="Email" name="Email" id="Email" required="">
+                        <input type="text" placeholder="Phone Number" name="phonenumber" id="phonenumber" required="">
+                        <textarea placeholder="Message" required="" name="message" id="message"></textarea>
+                        <input type="button" onclick="submitForm();" value="SUBMIT" style="border: none;
+    outline: none;
+    color: #fff;
+    padding: 0.4em 1.5em;
+    font-size: 1em;
+    margin: 1em 1em 0 0;
+    -webkit-appearance: none;
+    background: #0099e5;
+    transition: 0.5s all;
+    -webkit-transition: 0.5s all;
+    -moz-transition: 0.5s all;
+    letter-spacing: 3px;
+    cursor: pointer;">
+                    }
 
-                    </form>
-                </div>
+                    </div>
             </div>
         </div>
     </div>
 
 </div>
+<script type="text/javascript">
+
+    function submitForm()
+    {
+
+        if (UserFormValidate()) {
+            var id = $("#id").val() == undefined || $("#id").val() == "" ? 0 : $("#id").val();
+            var firstName = $("#firstname").val();
+            var lastName = $("#lastname").val();
+            var email = $("#Email").val();
+            var phone = $("#phonenumber").val();
+            var msg = $("#message").val();
+
+
+            var fd = new FormData();
+            fd.append('id', id);
+            fd.append('firstname', firstName);
+            fd.append('lastname', lastName);
+            fd.append('Email', email);
+            fd.append('phonenumber', phone);
+            fd.append('message', msg);
+            
+
+
+            $.ajax({
+                url: '/Home/ContactUsDetails',
+                data: fd,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (data) {
+
+                    if (data == "Ok")
+                    {
+                        alert("Thank You for Contacting us, We will get back to you soon");
+
+                        window.setTimeout(function () { location.reload() }, 3000)
+                    }
+                    //if (data == "Update") {
+                    //    toastr.success('Course Updated succsessfuly');
+                    //    window.setTimeout(function () { window.location.href = "/Home/CourseDetails" }, 3000)
+                    //}
+                }
+            });
+
+        }
+    }
+
+    function UserFormValidate()
+    {
+        var IsValid = true;
+
+        var firstName = $("#firstname").val();
+        var lastName = $("#lastname").val();
+        var email = $("#Email").val();
+        var phone = $("#phonenumber").val();
+        var msg = $("#message").val();
+
+
+        if (firstName == "" || firstName == undefined) {
+            alert("Please Insert First Name");
+            $("#firstname").focus();
+            return false;
+        }
+        if (lastName == "" || lastName == undefined) {
+            alert("Please Insert Last Name");
+            $("#lastname").focus();
+            return false;
+        }
+        if (email == "" || email == undefined) {
+            alert("Please insert Email");
+            $("#Email").focus();
+            return false;
+        }
+        if (phone == "" || phone == undefined) {
+            alert("please insert contact number");
+            $("#phonenumber").focus();
+            return false;
+        }
+
+        if (!numbersonly(phone)) {
+            alert("Please enter 10 digits mobile number");
+            $("#Contact").focus();
+            return false;
+        }
+        if (!validateEmail(email)) {
+            alert("Please valid Email Address");
+            $("#Email").focus();
+            return false;
+        }
+
+        if (msg == "" || msg == undefined) {
+            alert("please insert message");
+            $("#message").focus();
+            return false;
+        }
+
+        return IsValid;
+    }
+
+
+    function numbersonly(contact) {
+        var data = contact;
+        var filter = /^\d{10}$/;
+        if (!filter.test(data)) {
+            //alert("Please enter alphanumeric only");
+            //document.getElementById('<%=TextBox1.ClientID %>').value = "";
+            //document.getElementById('<%=TextBox1.ClientID %>').focus();
+            return false;
+        }
+        else if (data.length != 10) {
+            //alert("Please enter 10 digits");
+            return false;
+        }
+        else
+            return true;
+    }
+
+    function validateEmail(emailField) {
+        var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+
+        if (pattern.test(emailField) == false) {
+            // alert('Invalid Email Address');
+            return false;
+        }
+
+        return true;
+
+    }
+</script>

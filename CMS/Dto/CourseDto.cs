@@ -15,5 +15,6 @@ namespace CMS.Dto
         public bool DeleteFlag { get; set; }
         public string College { get; set; }
         public string University { get; set; }
+        public string duration { get; set; }
     }
 }
