@@ -1,0 +1,184 @@
+﻿@model CMS.Dto.QualificationDto
+@{
+    ViewBag.Title = "EligibleCourse";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<link href="~/Content/Plugin/toastr/toastr.css" rel="stylesheet" />
+<style>
+
+
+    .fstElement {
+        font-size: 1.2em;
+    }
+
+    .fstToggleBtn {
+        min-width: 16.5em;
+    }
+
+    .submitBtn {
+        display: none;
+    }
+
+    .fstMultipleMode {
+        display: block;
+    }
+
+        .fstMultipleMode .fstControls {
+            width: 100%;
+        }
+</style>
+
+
+<script src="~/Content/Plugin/fastselect.js"></script>
+<script src="~/Content/Plugin/fastselect.standalone.js"></script>
+<script src="~/Content/Plugin/fastselect.min.js"></script>
+<link rel="stylesheet" href="~/Content/Plugin/fastselect.min.css">
+<div class="col-lg-6">
+    <div class="card-header"><strong> Insert / Update Course</strong></div>
+    <div style="padding-bottom:10px;"></div>
+    <div class"card-body card-block">
+        @using (Html.BeginForm("EligibleCourseInsertUpdate", "Admin", FormMethod.Post, new { @id = "EligibleCourseInsertUpdate", @class = "form-horizontal" }))
+        {
+            <div class="row form-group">
+                <div class="col col-md-3"><label for="text-input" class=" form-control-label">Course Name</label></div>
+                <div class="col-12 col-md-9">
+                    @Html.HiddenFor(m => m.Eid)
+                    @Html.TextBoxFor(m => m.EligibleCourseName, new { @class = "form-control" })
+
+                </div>
+
+            </div>
+            <div class="row form-group">
+                <div class="col col-md-3"><label for="text-input" class=" form-control-label">College</label></div>
+                <div class="col-12 col-md-9">
+                    @Html.TextBoxFor(m => m.College, new { @placeholder = "College Name", @class = "form-control" })
+
+                </div>
+
+            </div>
+            <div class="row form-group">
+                <div class="col col-md-3"><label for="text-input" class=" form-control-label">University</label></div>
+                <div class="col-12 col-md-9">
+                    @Html.TextBoxFor(m => m.University, new { @placeholder = "University Name", @class = "form-control" })
+
+                </div>
+
+            </div>
+            <div class="row form-group">
+                <div class="col col-md-3"><label for="text-input" class=" form-control-label">Duration</label></div>
+                <div class="col-12 col-md-9">
+                    <select id="duration" name="duration" class="form-control">
+                        <option value="6 Month">6 Month</option>
+                        <option value="1 Year">1 Year</option>
+                        <option value="2 Year">2 Year</option>
+                        <option value="3 Year">3 Year</option>
+                        <option value="4 Year">4 Year</option>
+                        <option value="5 Year">5 Year</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <input type="button" value="Submit" id="submit" class="btn btn-primary btn-sm" onclick="submitForm();" />
+
+        }
+    </div>
+</div>
+<script>
+
+    //$("#eligibility_dorpdown").change(function () {
+    //   var selectCourse =  $("#eligibility_dorpdown").val();
+    //    alert(selectCourse);
+    //})
+
+    $(document).ready(function () {
+        $("#subSreamDiv").hide();
+    });
+
+    $(window).load(function () {
+        $("#subSreamDiv").hide();
+    });
+
+    function submitForm() {
+
+        if (CourseFormValidate()) {
+            var id = $("#Eid").val() == undefined || $("#Eid").val() == "" ? 0 : $("#Eid").val();
+            var eligibleCourseName = $("#EligibleCourseName").val();
+            var university = $("#College").val();
+            var college = $("#University").val();
+            var duration = $("#duration").val();
+
+
+
+            var fd = new FormData();
+            fd.append('Eid', id);
+            fd.append('EligibleCourseName', eligibleCourseName);
+            fd.append('College', college);
+            fd.append('University', university);
+            fd.append('duration', duration);
+
+            $.ajax({
+                url: '/Admin/EligibleCourseInsertUpdate',
+                data: fd,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (data) {
+
+                    window.setTimeout(function () { location.reload() }, 3000)
+                    //alert(data);
+                    if (data == "Add")
+                    {
+                        toastr.success('New Eligible Course added succsessfuly');
+                        window.setTimeout(function () { location.reload() }, 3000)
+                    }
+                    if (data == "Update")
+                    {
+                        toastr.success('Course Eligible Updated succsessfuly');
+                        window.setTimeout(function () { window.location.href ="/Admin/ViewEligibleCourse" }, 3000)
+                    }
+                }
+            });
+
+        }
+    }
+
+
+    function CourseFormValidate() {
+        var IsValid = true;
+        var eligibleCourseName = $("#EligibleCourseName").val();
+        var university = $("#College").val();
+        var college = $("#University").val();
+        var duration = $("#duration").val();
+
+        if (eligibleCourseName == "" || eligibleCourseName == undefined) {
+            alert("Please Insert Eligible Course Name");
+            return false;
+        }
+        if (university == "" || university == undefined) {
+            alert("Please Insert University");
+            return false;
+        }
+        if (college == "" || college == undefined) {
+            alert("please Insert College");
+            return false;
+        }
+        if (duration == "" || duration == undefined) {
+            alert("Please select Duretoin");
+            return false;
+        }
+
+        return IsValid;
+    }
+
+
+
+   
+
+   
+</script>
+
+
+

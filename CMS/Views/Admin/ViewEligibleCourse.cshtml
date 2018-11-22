@@ -1,0 +1,105 @@
+﻿@model IEnumerable<CMS.Dto.QualificationDto>
+@{
+    ViewBag.Title = "ViewEligibleCourse";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<table id="bootstrap-data-table" class="table table-striped table-bordered">
+    <tr>
+        <th>Sr.No</th>
+        <th>Course Name</th>
+        <th>College</th>
+        <th>University</th>
+        <th>Duration</th>
+        <th>Action</th>
+
+    </tr>
+    @{ int i = 1;}
+    @foreach (var eligibleCourseItem in Model)
+    {
+        <tr>
+            <td>
+                <span>@i</span>
+            </td>
+            <td>
+                <span>@eligibleCourseItem.EligibleCourseName</span>
+            </td>
+            <td>
+                <span>@eligibleCourseItem.College</span>
+            </td>
+            <td>
+                <span>@eligibleCourseItem.University</span>
+            </td>
+            <td>
+                <span>@eligibleCourseItem.duration</span>
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EligibleCourse", new { eid = eligibleCourseItem.Eid })
+                <!-- <a class="Edit" href="javascript:;">Edit</a>-->
+                <a class="Update" href="javascript:;" style="display:none">Update</a>
+                <a class="Cancel" href="javascript:;" style="display:none">Cancel</a>
+                @*<a class="Delete" href="javascript:void(0)" onclick="deleteUser(@eligibleCourseItem.Eid)">Delete</a>*@
+
+            </td>
+        </tr>
+        i++;
+    }
+</table>
+
+
+
+
+
+
+<script src="~/Content/Plugin/toastr/toastr.js"></script>
+
+<script type="text/javascript">
+
+
+        //Edit event handler.
+        $("body").on("click", "#bootstrap-data-table .Edit", function () {
+            var row = $(this).closest("tr");
+            var id = row.find("span").html();
+
+            alert(id);
+        });
+
+        //Delete event handler.
+        function deleteUser(Id)
+        {
+
+            if (confirm("Do you want to delete this row?")) {
+                //debugger;
+
+                var id = Id
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: "/Admin/DeleteUserData",
+                    data: '{id: ' + id + '}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+
+                    success: function (data) {
+
+                        //alert(JSON.stringify(data));
+
+                        //alert("Record Deleted");
+                        //
+                        toastr.success('Record Deleted');
+                        window.setTimeout(function () { location.reload() }, 3000)
+                    },
+                    error: function (xhr) {
+                        alert("Error");
+                        error.show;
+                    }
+                });
+            }
+        }
+</script>
+
+<!--<script type="text/javascript">
+    $(document).ready(function () {
+        $('#bootstrap-data-table-export').DataTable();
+    });
+</script>-->

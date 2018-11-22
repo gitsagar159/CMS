@@ -10,5 +10,8 @@ namespace CMS.Dto
         public int Eid { get; set; }
         public string EligibleCourseName { get; set; }
         public bool? DeleteFlag { get; set; }
+        public string College { get; set; }
+        public string University { get; set; }
+        public string duration { get; set; }
     }
 }

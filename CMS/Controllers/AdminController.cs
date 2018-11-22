@@ -83,7 +83,7 @@ namespace CMS.Controllers
         {
             if (HttpContext.Session["AdminUser"] != null)
             {
-                CourseDto course = new CourseDto();
+               // CourseDto course = new CourseDto();
                 if (Cid != null)
                 {
                     var courseDetails = await dataAccess.GetCourseByKey(Cid);
@@ -106,6 +106,52 @@ namespace CMS.Controllers
             }
             
         }
+
+        public async Task<ActionResult> EligibleCourse(int? eid)
+        {
+            if (HttpContext.Session["AdminUser"] != null)
+            {
+                QualificationDto eligibleCourse = new QualificationDto();
+                if (eid != null)
+                {
+                    var eligiblecourseDetails = await dataAccess.GetEligibleCourseByKye(eid);
+                    //ViewBag.eligigbleCourseList = await dataAccess.GetAllQualification();
+                    //ViewBag.mainStreamList = await dataAccess.GetAllMainStream();
+                    return View(eligiblecourseDetails);
+                }
+                else
+                {
+                    //ViewBag.eligigbleCourseList = await dataAccess.GetAllQualification();
+                    //ViewBag.mainStreamList = await dataAccess.GetAllMainStream();
+                    return View();
+                }
+                
+            }
+            else
+            {
+                ViewData["LoginError"] = "Please Login First";
+                return View("Index");
+
+            }
+
+        }
+
+
+        public async Task<ActionResult> EligibleCourseInsertUpdate(QualificationDto eligiblecourse)
+        {
+            int courseAdd = await dataAccess.InsertUpdateEligibleCourse(eligiblecourse);
+
+            if (courseAdd != 0 && eligiblecourse.Eid != 0)
+            {
+                return Json("Update");
+            }
+            else
+            {
+                return Json("Add");
+            }
+
+        }
+
 
 
         public async Task<ActionResult> ViewCourse()
@@ -201,7 +247,6 @@ namespace CMS.Controllers
             return Json(deletedUserId);
         }
 
-        
 
         public async Task<ActionResult> ViewContactUs()
         {
@@ -209,6 +254,22 @@ namespace CMS.Controllers
             {
                 var contactUsList = await dataAccess.GetAllContactUsDetails();
                 return View(contactUsList);
+            }
+            else
+            {
+                ViewData["LoginError"] = "Please Login First";
+                return View("Index");
+            }
+
+
+        }
+
+        public async Task<ActionResult> ViewEligibleCourse()
+        {
+            if (HttpContext.Session["AdminUser"] != null)
+            {
+                var EligibleCourseList = await dataAccess.GetAllQualification();
+                return View(EligibleCourseList);
             }
             else
             {

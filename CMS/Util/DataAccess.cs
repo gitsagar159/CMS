@@ -74,7 +74,8 @@ namespace CMS.Util
             }
         }
 
-        public async Task<QualificationDto> GetEligibleCourseByKye(int id)
+
+        public async Task<QualificationDto> GetEligibleCourseByKye(int? id)
         {
             using (connection = Get_Connection())
             {
@@ -148,7 +149,6 @@ namespace CMS.Util
 
         public async Task<int> InsertUpdateCourse(CourseDto model)
         {
-            
                 try
                 {
                     using (connection = Get_Connection())
@@ -174,6 +174,32 @@ namespace CMS.Util
                     throw;
                 }
                
+        }
+
+        public async Task<int> InsertUpdateEligibleCourse(QualificationDto model)
+        {
+
+            try
+            {
+                using (connection = Get_Connection())
+                {
+                    var param = new DynamicParameters();
+                    param.Add("eid", model.Eid, DbType.Int32, ParameterDirection.Input);
+                    param.Add("EligibleCourseName", model.EligibleCourseName, DbType.String, ParameterDirection.Input);
+                    param.Add("College", model.College, DbType.String, ParameterDirection.Input);
+                    param.Add("University", model.University, DbType.String, ParameterDirection.Input);
+                    param.Add("duration", model.duration, DbType.String, ParameterDirection.Input);
+
+                    var lastInsertedId = await connection.ExecuteScalarAsync<int>("sp_InsertUpdateEligibleCourse", param, commandType: CommandType.StoredProcedure);
+                    return lastInsertedId;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
         }
 
         public async Task<int> InsertUpdateUser(UsersDto model)

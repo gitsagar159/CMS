@@ -3,7 +3,7 @@
     ViewBag.Title = "CourseDetails";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    if(Model == null)
+    if (Model == null)
     {
         Response.Redirect("~/Home/Index");
     }
@@ -52,13 +52,27 @@
                             <th> <b>You may go with courses: </b></th>
                         </tr>
                         <tr>
-                            <td st>
-                                @{
-                                    foreach (var item in Model.Course)
-                                    {
-                                        <div class="col-md-6">@item.EligibleCourseName</div>
-                                    }
-                                }
+                            <td>
+                                
+                                <table class="table table-striped">
+                                    <tr>
+                                        <th>Course Name</th>
+                                        <th>College</th>
+                                        <th>University</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                    @{
+                                        foreach (var item in Model.Course)
+                                        {
+                                            <tr>
+                                                <td>@item.EligibleCourseName</td>
+                                                <td>@item.College</td>
+                                                <td>@item.University</td>
+                                                <td>@item.duration</td>
+                                            </tr>
+                                            }
+                                       }
+                                    </table>
                             </td>
                         </tr>
                     </table>

@@ -96,11 +96,15 @@ namespace CMS.Controllers
                         var eligibleCourseName = await dataAccess.GetEligibleCourseByKye(Convert.ToInt32(eligibleCourse));
                         if (usr.QualificationId == eligibleCourseName.Eid)
                         {
-                            QualificationDto test = new QualificationDto();
-                            test.EligibleCourseName = item.CourseName;
-                            test.Eid = item.cid;
-                            test.DeleteFlag = item.DeleteFlag;
-                            ObjQualification.Add(test);
+                            QualificationDto objQualificatio = new QualificationDto();
+                            objQualificatio.EligibleCourseName = item.CourseName;
+                            objQualificatio.Eid = item.cid;
+                            objQualificatio.DeleteFlag = item.DeleteFlag;
+                            objQualificatio.College = item.College;
+                            objQualificatio.University = item.University;
+                            objQualificatio.duration = item.duration;
+
+                            ObjQualification.Add(objQualificatio);
                         }
 
                     }
