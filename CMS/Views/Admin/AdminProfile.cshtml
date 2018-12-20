@@ -1,0 +1,164 @@
+﻿@model CMS.Dto.AdminUsersDto
+@using CMS.Dto;
+@{
+    ViewBag.Title = "AdminProfile";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+
+
+
+
+    var AdminUSerDetails = (AdminUsersDto)HttpContext.Current.Session["AdminUser"];
+    string oldpwd = string.Empty;
+    string profileImg = string.Empty;
+    if (Model != null)
+    {
+        oldpwd = Model.Password;
+        profileImg = Model.ProfileImage;
+    }
+
+    var Error = ViewData["LoginError"] != null ? ViewData["LoginError"] : string.Empty;
+}
+    
+
+
+    <div class="col-lg-12 col-md-12">
+        @Error
+        <div class="card">
+            <div class="card-header">
+                <strong class="card-title mb-12">Profile Card</strong>
+            </div>
+            <div class="card-body">
+                <div class="mx-auto d-block">
+                    <div class="row">
+                        <div class="col-4">
+                            <img class="rounded-circle mx-auto d-block" src="@profileImg" alt="Card image cap">
+                        </div>
+                        <div class="col-8">
+                            @using (Html.BeginForm("AdminProfileUpdate", "Admin", FormMethod.Post, new { @id = "AdminProfileUpdate", @class = "form-horizontal", enctype = "multipart/form-data" }))
+                            {
+                                <div class="card">
+                                    <div class="card-header">
+                                        <strong class="card-title">Profile Details</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row form-group">
+                                            <div class="col col-md-4"><label for="text-input" class=" form-control-label">User Name</label></div>
+                                            <div class="col-12 col-md-4">
+                                                @Html.HiddenFor(m => m.uid)
+                                                @Html.TextBoxFor(m => m.UserName, null, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col col-md-4"><label for="text-input" class=" form-control-label">Profile Image</label></div>
+                                            <div class="col-12 col-md-4">
+                                                <input type="file" name="profileImage" id="profileImage" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" id="pswdchnglink" class="btn btn-link btn-lg btn-block">Cick here to change password</button>
+                                <div class="card" id="passwordUpdate" style="display:none">
+                                    <div class="card-header">
+                                        <strong class="card-title">Change Password</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row form-group">
+                                            <div class="col col-md-4"><label for="text-input" class=" form-control-label">Old Password</label></div>
+                                            <div class="col-12 col-md-4">
+                                                @Html.Password("OldPassword", null, new { @class = "form-control", @onblur = "matchwitholderpassword();" })
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col col-md-4"><label for="text-input" class=" form-control-label">New Password</label></div>
+                                            <div class="col-12 col-md-4">
+                                                @Html.Password("Password", null, new { @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div >
+                                   
+                                </div>
+
+                                <input type="button" value="Submit" id="btnSubmit" name="btnSubmit" class="btn btn-primary btn-sm" onclick="formSubmit();" />
+                            }
+                        </div>
+                            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript">
+    $("#pswdchnglink").click(function () {
+        $("#passwordUpdate").css("display", "block");
+    });
+
+    function formSubmit() {
+ 
+        if (formValidation()) {
+           
+            $("#AdminProfileUpdate").submit();
+           // document.getElementById("AdminProfileUpdate").submit();
+        }
+    }
+
+
+    function formValidation() {
+
+        var isValid = true;
+
+        var userName = $("#UserName").val();
+        var oldPassword = $("#OldPassword").val()
+        var password = $("#Password").val();
+        
+
+
+        if (userName == '' || userName == undefined) {
+            alert('Please Enter User name')
+            return false;
+        }
+        if (oldPassword == '' && password != '')
+        {
+            alert('Please Enter Old password')
+            return false;
+        }
+        if (!ImageValidation())
+        {
+            return false;
+        }
+        
+        
+
+        return isValid;
+    }
+
+    $("#OldPassword").blur(function () {
+
+            if ($("#OldPassword").val() != '@Html.Raw(oldpwd)') {
+                alert('old password not match')
+                formValidation.isValid = false;
+            }
+    });
+
+
+    function ImageValidation()
+    {
+        var img = $("#profileImage").val();
+        var imgExt = img.substring(img.lastIndexOf('.') + 1).toLowerCase();
+        var imgValidExt = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+        if (img != '')
+        {
+            if ($.inArray(imgExt, imgValidExt) == -1) {
+                alert('Please select Valid Image File, jpeg  jpg  png  gif  bmp');
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+    }
+
+
+</script>
